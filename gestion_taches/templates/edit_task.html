@@ -1,0 +1,58 @@
+{% extends "index.html" %}
+
+{% block title %} Édition de tâche {% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    form {
+        width: 50%;
+        margin: 0 auto;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input[type="text"], textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+    }
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+</style>
+<h1>Édition de tâche</h1>
+<form id="editForm" method="POST">
+    <label for="titre">Titre:</label>
+    <input type="text" id="titre" name="titre" value="{{ tache.titre }}"><br><br>
+
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description">{{ tache.description }}</textarea><br><br>
+
+    <label for="statut">Statut:</label>
+    <select id="statut" name="statut">
+        <option value="non assignee" {% if tache.statut == 'non assignee' %} selected {% endif %}>Non assignée</option>
+        <option value="en cours" {% if tache.statut == 'en cours' %} selected {% endif %}>En cours</option>
+        <option value="terminee" {% if tache.statut == 'terminee' %} selected {% endif %}>Terminée</option>
+    </select><br><br>
+    <label for="employe_assigne">Employé assigné:</label>
+    <input type="text" id="employe_assigne" name="employe_assigne" value="{{ tache.employe_assigne }}"><br><br>
+    <input type="submit" value="Enregistrer">
+</form>
+</body>
+{% endblock %}

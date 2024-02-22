@@ -1,0 +1,102 @@
+{% extends "index.html" %}
+
+{% block title %} Tâches en cours {% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        width: 80%;
+        margin: 20px auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    a {
+        text-decoration: none;
+        color: blue;
+        margin-right: 10px;
+    }
+
+    a:hover {
+        color: red;
+    }
+</style>
+
+<div class="container">
+    <h1>Liste des tâches</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>statut</th>
+                <th>Employé assigné</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tache in taches %}
+            <tr>
+                <td>{{ tache['titre'] }}</tad>
+                <td>{{ tache['description'] }}</td>
+                <td>{{ tache['statut'] }}</td>
+                <td>{{ tache['employe_assigne'] }}</td>
+                <td>
+                    <a href="{{ url_for('edit_task', titre=tache['titre']) }}">Éditer</a>
+                    <a href="#" onclick="deleteTask('{{ tache['titre'] }}'); return false;">Supprimer</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function deleteTask(titre) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+            fetch(`/delete/${titre}`, {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Mettre à jour la liste des tâches sur la page
+                    window.location.reload();
+                } else {
+                    console.error('Erreur lors de la suppression de la tâche');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la suppression de la tâche:', error);
+            });
+        }
+    }
+</script>
+{% endblock %}
