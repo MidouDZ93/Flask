@@ -1,20 +1,20 @@
 [
     {
-        "nom":"Durand",
-        "prenom":"Jean",
-        "email":"jean.Durand@test.com",
-        "icone":"avatar1.png"
+        "nom": "Durand",
+        "prenom": "Jean",
+        "email": "jean.Durand@test.com",
+        "icone": "avatar1.png"
     },
     {
-        "nom":"Dupont",
-        "prenom":"Paul",
-        "email":"paul.dupond@test.com",
-        "icone":"avatar2.png"
+        "nom": "Dupont",
+        "prenom": "Paul",
+        "email": "paul.dupond@test.com",
+        "icone": "avatar2.png"
     },
     {
-        "nom":"Martin",
-        "prenom":"Jacques",
-        "email":"jaques.martin@test.com",
-        "icone":"avatar2.png"
+        "nom": "Martin",
+        "prenom": "Jacques",
+        "email": "jaques.martin@test.com",
+        "icone": "avatar2.png"
     }
 ]

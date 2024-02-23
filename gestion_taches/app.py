@@ -15,8 +15,16 @@ def tacheencour():
      taches = json.load(file)
      taches_en_cours = [tache for tache in taches if tache.get('statut') == 'en cours'or tache.get('statut') == 'non assignee']
      return render_template('tacheencours.html', taches=taches_en_cours)
-   
 
+
+def get_all_employees():
+    with open('employes.json', 'r') as employes_file:
+        employes = json.load(employes_file)
+    return employes
+
+
+  
+from flask import redirect, url_for
 
 @app.route("/edit/<titre>", methods=['GET', 'POST'])
 def edit_task(titre):
@@ -31,29 +39,25 @@ def edit_task(titre):
                 tache['statut'] = request.form.get('statut')
                 nouveau_nom_employe = request.form.get('employe_assigne')
                 
-                # Vérifier si le nom de l'employé a été modifié
-                if tache['employe_assigne'] != nouveau_nom_employe:
-                    tache['employe_assigne'] = nouveau_nom_employe
-                    
-                    # Mettre à jour le dictionnaire des employés
-                    with open('employes.json', 'r+') as employes_file:
-                        employes = json.load(employes_file)
-                        for employe in employes:
-                            if employe['nom'] == tache['employe_assigne']:
-                                # Mettre à jour le nom de l'employé
-                                employe['nom'] = nouveau_nom_employe
-                                break
-                        employes_file.seek(0)
-                        json.dump(employes, employes_file, indent=4)
-                        employes_file.truncate()
+                # Rechercher l'employé dans la liste des employés
+                employe_details = None
+                with open('employes.json', 'r') as employes_file:
+                    employes = json.load(employes_file)
+                    for employe in employes:
+                        if employe['nom'] == nouveau_nom_employe:
+                            employe_details = employe
+                            break
+                
+                # Mettre à jour l'employé assigné dans la tâche
+                tache['employe_assigne'] = employe_details
                 
                 break
         
         with open('taches.json', 'w') as file:
             json.dump(taches, file, indent=4)
         
-        # Rediriger vers la page affichant les tâches en cours
-        return redirect(url_for('tacheencours'))
+        # Rediriger vers la page affichant toutes les tâches
+        return redirect(url_for('touteslestaches'))
     else:
         # Si la méthode de requête est GET, renvoyer le template edit_task.html avec les détails de la tâche
         with open('taches.json', 'r') as file:
@@ -61,11 +65,13 @@ def edit_task(titre):
         
         for tache in taches:
             if tache['titre'] == titre:
-                return render_template('edit_task.html', tache=tache)
+                employes = get_all_employees()  # Utilisation de la fonction pour obtenir la liste des employés
+                return render_template('edit_task.html', tache=tache, employes=employes)
         
-        # Si la tâche avec le titre spécifié n'est pas trouvée, rediriger vers la page affichant les tâches en cours
+        # Si la tâche avec le titre spécifié n'est pas trouvée, rediriger vers la page affichant toutes les tâches
         flash('La tâche spécifiée n\'a pas été trouvée.', 'error')
-        return redirect(url_for('tacheencours'))
+        return redirect(url_for('touteslestaches'))
+
 
 
 
@@ -156,6 +162,13 @@ def create_task():
 
     # Rediriger vers la page de toutes les tâches
     return redirect(url_for('touteslestaches'))
+
+
+
+def get_all_employees():
+    with open('employes.json', 'r') as employes_file:
+        employes = json.load(employes_file)
+    return employes
 
 
 

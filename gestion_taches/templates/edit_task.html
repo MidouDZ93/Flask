@@ -37,29 +37,36 @@
     }
 </style>
 <h1>Édition de tâche</h1>
-<form id="editForm" method="POST">
+<form id="edit_task" method="POST">
     <label for="titre">Titre:</label>
-    <input type="text" id="titre" name="titre" value="{{ tache.titre }}"><br><br>
+    <input type="text" id="titre" name="titre" value="{{ tache.titre }}"><br>
 
     <label for="description">Description:</label><br>
-    <textarea id="description" name="description">{{ tache.description }}</textarea><br><br>
+    <textarea id="description" name="description">{{ tache.description }}</textarea>
 
     <label for="statut">Statut:</label>
+    <span  id="statut">{{ tache.statut }}</span><br>
+
+    <label for="statut">Changer le Statut:</label>
     <select id="statut" name="statut">
         <option value="non assignee" {% if tache.statut == 'non assignee' %} selected {% endif %}>Non assignée</option>
         <option value="en cours" {% if tache.statut == 'en cours' %} selected {% endif %}>En cours</option>
         <option value="terminee" {% if tache.statut == 'terminee' %} selected {% endif %}>Terminée</option>
     </select><br><br>
-    <label for="employe_assigne">Employé assigné:</label>
-    <select id="employe_assigne" name="employe_assigne" required>
-        <option value="" disabled>Choisir un employé</option>
-        <!-- Populate dropdown menu with employee names from employes.json -->
-        {% for employe in employes %}
-            <option value="{{ employe['nom'] }}" {% if tache['employe_assigne']['nom'] == employe['nom'] %} selected {% endif %}>
-                {{ employe['prenom'] }} {{ employe['nom'] }}
-            </option>
-        {% endfor %}
-    </select><br><br>
+
+    <label for="employe_selected">Employé Assigné:</label>
+    <span id="employe_selected">{{ tache.employe_assigne['prenom'] }} {{ tache.employe_assigne['nom'] }}</span><br><br>
+    
+
+    <label for="employe_assigne">Assigner un autre Employé :</label>
+<select id="employe_assigne" name="employe_assigne" required>
+    <option value="" disabled selected>Choisir un employé</option>
+    <!-- Populate dropdown menu with employee names from employes.json -->
+    {% for employe in employes %}
+        <option value="{{ employe.nom }}">{{ employe.nom }} {{ employe.prenom }}</option>
+    {% endfor %}
+</select><br><br>
+
 
     <input type="submit" value="Enregistrer">
 </form>

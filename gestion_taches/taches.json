@@ -1,9 +1,14 @@
 [
     {
-        "titre": "test6",
+        "titre": "test640",
         "description": "description6",
-        "statut": "non assignee",
-        "employe_assigne": "None"
+        "statut": "terminee",
+        "employe_assigne": {
+            "nom": "Martin",
+            "prenom": "Jacques",
+            "email": "jaques.martin@test.com",
+            "icone": "avatar2.png"
+        }
     },
     {
         "titre": "test40",
@@ -52,14 +57,14 @@
         "employe_assigne": "Dupont"
     },
     {
-        "titre": "titre333",
+        "titre": "titre-version1",
         "description": "description 333",
-        "statut": "termine",
+        "statut": "en cours",
         "employe_assigne": {
-            "nom": "Durand",
-            "prenom": "Jean",
-            "email": "jean.Durand@test.com",
-            "icone": "avatar1.png"
+            "nom": "Martin",
+            "prenom": "Jacques",
+            "email": "jaques.martin@test.com",
+            "icone": "avatar2.png"
         }
     },
     {
