@@ -180,4 +180,69 @@ def gestion_employes():
     # Render the template with the employees data
     return render_template('Listedesemployes.html', employes=employes)
 
+
+
+@app.route("/ajoutemploye", methods=['GET', 'POST'])
+def create_employee():
+    if request.method == 'POST':
+        # Récupérer les données soumises par le formulaire
+        prenom = request.form['prenom']
+        nom = request.form['nom']
+        email = request.form['email']
+        icone = request.form['icone']
+
+        # Créer un nouvel employé avec les données soumises
+        # (code pour créer un employé dans la base de données ou le fichier JSON)
+
+        # Rediriger l'utilisateur vers la page de listing des employés ou afficher un message de confirmation
+        return redirect(url_for('gestion_employes'))
+    else:
+        # Si la méthode de requête est GET, simplement afficher le formulaire
+        return render_template('creationemploye.html')
+    
+
+@app.route("/editemploye", methods=['GET', 'POST'])
+def edit_employee(id):
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        prenom = request.form['prenom']
+        nom = request.form['nom']
+        email = request.form['email']
+        icone = request.form['icone']
+
+        # Modifier l'employé dans la liste des employés
+        with open('employes.json', 'r+') as employes_file:
+            employes = json.load(employes_file)
+            for employe in employes:
+                if employe['id'] == id:
+                    employe['prenom'] = prenom
+                    employe['nom'] = nom
+                    employe['email'] = email
+                    employe['icone'] = icone
+                    break
+
+            # Réécrire la liste des employés dans le fichier
+            employes_file.seek(0)
+            json.dump(employes, employes_file, indent=4)
+
+        # Afficher un message de confirmation
+        flash('Employé modifié avec succès!', 'success')
+
+        # Rediriger vers la liste des employés
+        return redirect(url_for('list_employees'))
+    else:
+        # Charger les détails de l'employé à éditer
+        with open('employes.json', 'r') as employes_file:
+            employes = json.load(employes_file)
+            for employe in employes:
+                if employe['id'] == id:
+                    return render_template('editerunemploye.html', employee=employe)
+        # Si aucun employé avec cet identifiant n'est trouvé, rediriger vers la liste des employés avec un message d'erreur
+        flash('Employé non trouvé.', 'error')
+        return redirect(url_for('list_employees'))
+
+if __name__ == "__main__":
+       
+
+
 app.run()
