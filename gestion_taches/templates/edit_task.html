@@ -51,8 +51,16 @@
         <option value="terminee" {% if tache.statut == 'terminee' %} selected {% endif %}>Terminée</option>
     </select><br><br>
     <label for="employe_assigne">Employé assigné:</label>
-    <input type="text" id="employe_assigne" name="employe_assigne" value="{{ tache.employe_assigne }}"><br><br>
+    <select id="employe_assigne" name="employe_assigne" required>
+        <option value="" disabled>Choisir un employé</option>
+        <!-- Populate dropdown menu with employee names from employes.json -->
+        {% for employe in employes %}
+            <option value="{{ employe['nom'] }}" {% if tache['employe_assigne']['nom'] == employe['nom'] %} selected {% endif %}>
+                {{ employe['prenom'] }} {{ employe['nom'] }}
+            </option>
+        {% endfor %}
+    </select><br><br>
+
     <input type="submit" value="Enregistrer">
 </form>
-</body>
 {% endblock %}

@@ -16,6 +16,8 @@ def tacheencour():
      taches_en_cours = [tache for tache in taches if tache.get('statut') == 'en cours'or tache.get('statut') == 'non assignee']
      return render_template('tacheencours.html', taches=taches_en_cours)
    
+
+
 @app.route("/edit/<titre>", methods=['GET', 'POST'])
 def edit_task(titre):
     if request.method == 'POST':
@@ -27,16 +29,33 @@ def edit_task(titre):
                 tache['titre'] = request.form.get('titre')
                 tache['description'] = request.form.get('description')
                 tache['statut'] = request.form.get('statut')
-                tache['employe_assigne'] = request.form.get('employe_assigne')
+                nouveau_nom_employe = request.form.get('employe_assigne')
+                
+                # Vérifier si le nom de l'employé a été modifié
+                if tache['employe_assigne'] != nouveau_nom_employe:
+                    tache['employe_assigne'] = nouveau_nom_employe
+                    
+                    # Mettre à jour le dictionnaire des employés
+                    with open('employes.json', 'r+') as employes_file:
+                        employes = json.load(employes_file)
+                        for employe in employes:
+                            if employe['nom'] == tache['employe_assigne']:
+                                # Mettre à jour le nom de l'employé
+                                employe['nom'] = nouveau_nom_employe
+                                break
+                        employes_file.seek(0)
+                        json.dump(employes, employes_file, indent=4)
+                        employes_file.truncate()
+                
                 break
         
         with open('taches.json', 'w') as file:
             json.dump(taches, file, indent=4)
         
-        # Redirect to the page showing tasks in progress
-        return redirect(url_for('tacheencour'))
+        # Rediriger vers la page affichant les tâches en cours
+        return redirect(url_for('tacheencours'))
     else:
-        # If the request method is GET, render the edit_task.html template with the task details
+        # Si la méthode de requête est GET, renvoyer le template edit_task.html avec les détails de la tâche
         with open('taches.json', 'r') as file:
             taches = json.load(file)
         
@@ -44,9 +63,12 @@ def edit_task(titre):
             if tache['titre'] == titre:
                 return render_template('edit_task.html', tache=tache)
         
-        # If the task with the provided title is not found, redirect to the page showing tasks in progress
+        # Si la tâche avec le titre spécifié n'est pas trouvée, rediriger vers la page affichant les tâches en cours
         flash('La tâche spécifiée n\'a pas été trouvée.', 'error')
         return redirect(url_for('tacheencours'))
+
+
+
 
 
 @app.route("/delete/<titre>", methods=['POST'])
@@ -82,7 +104,59 @@ def export_json():
     return send_file('taches.json', as_attachment=True)
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+
+
+# Charger les données des employés depuis employes.json
+with open('employes.json', 'r') as file:
+    employes = json.load(file)
+
+# Route pour afficher le formulaire de création
+@app.route("/ajouttache", methods=['GET'])
+def create_task_form():
+    return render_template('ajouttache.html', employes=employes)
+
+@app.route("/ajouttache", methods=['POST'])
+def create_task():
+    # Récupérer les détails de la tâche depuis le formulaire
+    titre = request.form['titre']
+    description = request.form['description']
+    statut = request.form['statut']
+    employe_nom = request.form['employe_assigne']
+
+    # Rechercher l'employé dans la liste des employés
+    employe_details = None
+    for employe in employes:
+        if employe['nom'] == employe_nom:
+            employe_details = employe
+            break
+
+    # Créer un dictionnaire pour la nouvelle tâche
+    new_task = {
+        'titre': titre,
+        'description': description,
+        'statut': statut,
+        'employe_assigne': {
+            'nom': employe_details['nom'],
+            'prenom': employe_details['prenom'],
+            'email': employe_details['email'],
+            'icone': employe_details['icone']
+        }
+    }
+
+    # Ajouter la nouvelle tâche à la liste des tâches
+    with open('taches.json', 'r+') as file:
+        tasks = json.load(file)
+        tasks.append(new_task)
+        file.seek(0)
+        json.dump(tasks, file, indent=4)
+
+    # Afficher un message de confirmation
+    flash('Tâche créée avec succès!', 'success')
+
+    # Rediriger vers la page de toutes les tâches
+    return redirect(url_for('touteslestaches'))
+
+
 
 app.run()

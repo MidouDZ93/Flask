@@ -1,0 +1,108 @@
+{% extends "index.html" %}
+
+{% block title %} Créer une nouvelle tâche : {% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    h1 {
+        margin-bottom: 20px;
+    }
+    
+    form {
+        width: 50%;
+        margin: 0 auto;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    input[type="text"], textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    
+    input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+    }
+    
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+    
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var statutSelect = document.getElementById("statut");
+        var employeAssigneField = document.getElementById("employe_assigne");
+
+        statutSelect.addEventListener("change", function() {
+            if (statutSelect.value === "non assignee") {
+                employeAssigneField.disabled = true;
+            } else {
+                employeAssigneField.disabled = false;
+            }
+        });
+
+        // Désactiver le champ si le statut initial est "non assigné"
+        if (statutSelect.value === "non assignee") {
+            employeAssigneField.disabled = true;
+        }
+    });
+</script>
+
+<h1>Créer une nouvelle tâche</h1>
+
+<form action="{{ url_for('create_task') }}" method="post">
+    <label for="titre">Titre:</label>
+    <input type="text" id="titre" name="titre" required><br><br>
+
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description" required></textarea><br><br>
+
+    <label for="statut">Statut:</label>
+    <select id="statut" name="statut" required>
+        <option value="non assignee">Non assignée</option>
+        <option value="en cours">En cours</option>
+        <option value="termine">Terminée</option>
+    </select><br><br>
+
+    <label for="employe_assigne">Employé assigné:</label>
+    <select id="employe_assigne" name="employe_assigne" required>
+        <option value="" disabled selected>Choisir un employé</option>
+        <!-- Populate dropdown menu with employee names from employes.json -->
+        {% for employe in employes %}
+        <option value="{{ employe.nom }}">{{ employe.nom }} {{ employe.prenom }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <input type="submit" value="Créer">
+</form>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+{% endblock %}

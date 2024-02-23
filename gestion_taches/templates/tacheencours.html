@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 
-{% block title %} Tâches en cours {% endblock %}
+{% block title %} Tâches en cours: {% endblock %}
 
 {% block content %}
 
@@ -68,7 +68,7 @@
                 <td>{{ tache['titre'] }}</tad>
                 <td>{{ tache['description'] }}</td>
                 <td>{{ tache['statut'] }}</td>
-                <td>{{ tache['employe_assigne'] }}</td>
+                <td>{{ tache['employe_assigne']['nom'] }}</td>
                 <td>
                     <a href="{{ url_for('edit_task', titre=tache['titre']) }}">Éditer</a>
                     <a href="#" onclick="deleteTask('{{ tache['titre'] }}'); return false;">Supprimer</a>
