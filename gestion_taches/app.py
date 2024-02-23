@@ -114,7 +114,7 @@ def export_json():
 
 
 # Charger les données des employés depuis employes.json
-with open('employes.json', 'r') as file:
+with open('employes.json', 'r' ) as file:
     employes = json.load(file)
 
 # Route pour afficher le formulaire de création
@@ -171,5 +171,13 @@ def get_all_employees():
     return employes
 
 
+@app.route("/gestionemploye")
+def gestion_employes():
+    # Load employees data from employes.json
+    with open('employes.json', 'r') as file:
+        employes = json.load(file)
+   
+    # Render the template with the employees data
+    return render_template('Listedesemployes.html', employes=employes)
 
 app.run()
